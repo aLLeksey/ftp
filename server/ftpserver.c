@@ -4,27 +4,36 @@
 3)transfer 22
 */
 
-int open_port();
+
+int open_port(int PORT);
 int transfer();
-#define PORT 21
-#define MAXPORT 9
 
 #include<string.h>
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<netinet/in.h>
 #include<netdb.h>
-
+#include<arpa/inet.h>
 
 #include<unistd.h>
 #include<stdio.h>
 
 #include<errno.h>
+
+#include "../common.c"
+
+
+void talk2client(int socket);
+
 int main(){
-  open_port();
+  int fd = open_port(21);
+  /*
+  if (fd != -1)
+    talk1(fd);
+  */
 }
 
-int open_port(){
+int open_port(int PORT){
   struct sockaddr_in addr;
 
   memset(&addr, 0, sizeof(addr));
@@ -32,11 +41,13 @@ int open_port(){
   addr.sin_port = htons(PORT);
   
   int skt = socket(PF_INET, SOCK_STREAM, 0);
-
+  printf("hi\n");
   bind(skt, (struct sockaddr*) &addr, sizeof(addr));
-
-  listen(skt, 0);
-
+  
+  if(listen(skt, 0) == -1){
+    perror("listen ");
+    return -1;
+  }
   struct sockaddr_storage addr_s;
 
   memset(&addr_s, 0, sizeof(addr_s));
@@ -44,13 +55,22 @@ int open_port(){
   int addr_size = sizeof(addr_s);
   int fd = accept( skt, (struct sockaddr*) &addr_s, &addr_size);
   if (fd == -1){
-    perror("accept %d", errno);
+    perror("accept");
   }
   
   if (fd != 0){
-    printf("Connected\n");
   }
+  return fd;  
+  
+}
 
+
+//TODO
+
+
+/*
+void talk (int socket){
+  
   
   char buf[MAXPORT + 1];
   rv = recv(fd, buf, MAXPORT, 0);
@@ -83,25 +103,6 @@ int open_port(){
   else {
     perror("WRONG CLIENT PORT");
   }
-  //conect_to_client;
-  
 }
-int connect_to_client(port, ip){
-  struct sockaddr_in addr;
 
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(PORT);
-  addr.sin_addr.s_addr = inet_addr("");
-
-  int skt = socket( PF_INET, SOCK_STREAM, 0 );
-  if (skt == -1){
-    perror("socket error %d ", errno);
-  
-  int cnt = connect( skt, (struct sockaddr*) &addr, sizeof(addr) );
-  if (cnt == -1){
-    perror("cnt error %d ",errno);
-  }
-  
-  
-}
+*/

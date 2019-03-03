@@ -28,8 +28,10 @@ void ip2string(int ip, char** s){
 
 
 int connect2(int IP, int PORT){
-  int ip = htonl(IP);
-  int port = htons(PORT);
+  //^ in network byte order^
+  
+  // int ip = htonl(IP);  
+  // int port = htons(PORT);
   
   struct sockaddr_in addr;
 
@@ -45,6 +47,40 @@ int connect2(int IP, int PORT){
   int cnct = connect( skt, (struct sockaddr*) &addr, sizeof(addr) );
   if (cnct == -1){
     perror("cnct error");
+    return -1;
   }
-  return -1;
+  return cnct;
+}
+
+
+
+int connect4rom(int PORT){
+  struct sockaddr_in addr;
+
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(PORT);
+  
+  int skt = socket(PF_INET, SOCK_STREAM, 0);
+  printf("hi\n");
+  bind(skt, (struct sockaddr*) &addr, sizeof(addr));b 
+  
+  if(listen(skt, 0) == -1){
+    perror("listen ");
+    return -1;
+  }
+  struct sockaddr_storage addr_s;
+
+  memset(&addr_s, 0, sizeof(addr_s));
+
+  int addr_size = sizeof(addr_s);
+  int fd = accept( skt, (struct sockaddr*) &addr_s, &addr_size);
+  if (fd == -1){
+    perror("accept");
+  }
+  
+  if (fd != 0){
+  }
+  return fd;  
+  
 }
