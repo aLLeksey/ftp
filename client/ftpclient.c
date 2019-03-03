@@ -73,8 +73,18 @@ void  recv_file(int sck, int fd, int size){//another thread+ not thread version
 }
 
 void send_file_list(int sck){
-  
+  char buf[1000];
+  DIR *dir;
+  struct dirent *ent;
+  if((dir = opendir(".")) != NULL ){
+      while ((ent == readdir(dir)) != NULL){
+        //TODO send ent->d_name
+      }
+    }
 }
+
+  
+	
 
 void rcv_and_print_file_list(int sck){
 }
