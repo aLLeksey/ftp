@@ -79,6 +79,15 @@ void send_file_list(int sck){
   if((dir = opendir(".")) != NULL ){
       while ((ent == readdir(dir)) != NULL){
         //TODO send ent->d_name
+	snprintf(buf,1000,"%s\n",ent->d_name);
+	do{
+	  l = read(fd, buf, 1000);
+	  int k = 0;
+	  while(k != l){
+	    int n  = send(skt,buf,1000,0);
+	    k+=n;
+	  }
+	}
       }
     }
 }
