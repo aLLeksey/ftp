@@ -72,31 +72,16 @@ void  recv_file(int sck, int fd, int size){//another thread+ not thread version
     }
 }
 
-void send_file_list(int sck){
-  char buf[1000];
-  DIR *dir;
-  struct dirent *ent;
-  if((dir = opendir(".")) != NULL ){
-      while ((ent == readdir(dir)) != NULL){
-        //TODO send ent->d_name
-	snprintf(buf,1000,"%s\n",ent->d_name);
-	do{
-	  l = read(fd, buf, 1000);
-	  int k = 0;
-	  while(k != l){
-	    int n  = send(skt,buf,1000,0);
-	    k+=n;
-	  }
-	}
-      }
-    }
-}
+
 
   
 	
 
 void rcv_and_print_file_list(int sck){
 }
+
+
+// FIX COMPILE ERRORS
 
 /* recv IP/PORT -> new thread -> wait till file recv request-> recv_file */
 // check with nout c + Python old

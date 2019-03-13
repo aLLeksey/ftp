@@ -16,6 +16,8 @@ void talk1(int socket){
 }
 
 
+
+
 int string2ip(const char *s){
   struct sockaddr_in sa;
   memset(&sa,0,sizeof(sa));
@@ -37,8 +39,8 @@ int connect2(int IP, int PORT){
 
   memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = port;
-  addr.sin_addr.s_addr = ip;
+  addr.sin_port = PORT;
+  addr.sin_addr.s_addr = IP;
 
   int skt = socket( PF_INET, SOCK_STREAM, 0 );
   if (skt == -1){
@@ -64,6 +66,41 @@ int connect4rom(int PORT){
   int skt = socket(PF_INET, SOCK_STREAM, 0);
   printf("hi\n");
   bind(skt, (struct sockaddr*) &addr, sizeof(addr));b 
+  
+  if(listen(skt, 0) == -1){
+    perror("listen ");
+    return -1;
+  }
+  struct sockaddr_storage addr_s;
+
+  memset(&addr_s, 0, sizeof(addr_s));
+
+  int addr_size = sizeof(addr_s);
+  int fd = accept( skt, (struct sockaddr*) &addr_s, &addr_size);
+  if (fd == -1){
+    perror("accept");
+  }
+  
+  if (fd != 0){
+  }
+  return fd;  
+  
+}
+
+
+
+
+
+int open_port(int PORT){
+  struct sockaddr_in addr;
+
+  memset(&addr, 0, sizeof(addr));
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(PORT);
+  
+  int skt = socket(PF_INET, SOCK_STREAM, 0);
+  printf("hi\n");
+  bind(skt, (struct sockaddr*) &addr, sizeof(addr));
   
   if(listen(skt, 0) == -1){
     perror("listen ");

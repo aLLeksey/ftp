@@ -5,6 +5,8 @@
 */
 
 
+//TODO FIX COMPLILE ERRORS -> VIEW client TODO -> ...
+
 int open_port(int PORT);
 int transfer();
 
@@ -26,43 +28,16 @@ int transfer();
 void talk2client(int socket);
 
 int main(){
-  int fd = open_port(21);
+  int port = htons(21);
+  int fd = open_port(port);
+  void send_file_list(fd);
   /*
   if (fd != -1)
     talk1(fd);
   */
-}
-
-int open_port(int PORT){
-  struct sockaddr_in addr;
-
-  memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(PORT);
-  
-  int skt = socket(PF_INET, SOCK_STREAM, 0);
-  printf("hi\n");
-  bind(skt, (struct sockaddr*) &addr, sizeof(addr));
-  
-  if(listen(skt, 0) == -1){
-    perror("listen ");
-    return -1;
-  }
-  struct sockaddr_storage addr_s;
-
-  memset(&addr_s, 0, sizeof(addr_s));
-
-  int addr_size = sizeof(addr_s);
-  int fd = accept( skt, (struct sockaddr*) &addr_s, &addr_size);
-  if (fd == -1){
-    perror("accept");
-  }
-  
-  if (fd != 0){
-  }
-  return fd;  
   
 }
+
 
 
 //TODO
@@ -106,3 +81,24 @@ void talk (int socket){
 }
 
 */
+
+
+void send_file_list(int sck){
+  char buf[1000];
+  DIR *dir;
+  struct dirent *ent;
+  if((dir = opendir(".")) != NULL ){
+      while ((ent == readdir(dir)) != NULL){
+        //TODO send ent->d_name
+	snprintf(buf,1000,"%s\n",ent->d_name);
+	do{
+	  l = read(fd, buf, 1000);
+	  int k = 0;
+	  while(k != l){
+	    int n  = send(skt,buf,1000,0);
+	    k+=n;
+	  }
+	}
+      }
+    }
+}
