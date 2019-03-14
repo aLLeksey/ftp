@@ -106,3 +106,11 @@ void rcv_and_print_file_list(int sck){
 
 /* recv IP/PORT -> new thread -> wait till file recv request-> recv_file */
 // check with nout c + Python old
+
+//show catalog(client)
+// check with nout c + Python old
+
+//be able choose file to download
+
+// navigate catalog
+// add telnet commands

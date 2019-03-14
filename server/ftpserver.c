@@ -7,6 +7,8 @@
 
 //TODO FIX COMPLILE ERRORS -> VIEW client TODO -> ...
 
+#define SERVER_PORT 21
+
 int open_port(int PORT);
 int transfer();
 
@@ -22,13 +24,15 @@ int transfer();
 
 #include<errno.h>
 
+#include<dirent.h>
+  
 #include "../common.c"
 
 
 void talk2client(int socket);
 
 int main(){
-  int port = htons(21);
+  int port = htons(SERVER_PORT);
   int fd = open_port(port);
   void send_file_list(fd);
   /*
