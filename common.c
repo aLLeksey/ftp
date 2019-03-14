@@ -1,3 +1,5 @@
+#define SIZE 1000
+
 void talk2(int socket){
   char buf[1000];
   while(1){
@@ -65,7 +67,7 @@ int connect4rom(int PORT){
   
   int skt = socket(PF_INET, SOCK_STREAM, 0);
   printf("hi\n");
-  bind(skt, (struct sockaddr*) &addr, sizeof(addr));b 
+  bind(skt, (struct sockaddr*) &addr, sizeof(addr));
   
   if(listen(skt, 0) == -1){
     perror("listen ");

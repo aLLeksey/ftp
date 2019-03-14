@@ -13,11 +13,15 @@
 #include <stdio.h>
 
 #include "../common.c"
+#ifndef SIZE
+#define SIZE 1000
+#endif
 
 #define MAXPORT 9
 
 #define CLIENT_PORT 7777
-#define SERVER_PORT 9999
+//#define SERVER_PORT 9999
+#define SERVER_PORT 21
 
 #define CLIENT_IP 0
 #define SERVER_IP 0
@@ -25,7 +29,8 @@
 int client_listen_fd;
 
 int main(){
-  int fd =  connect2(SERVER_IP,SERVER_PORT);
+  int port = htons(SERVER_PORT);
+  int fd =  connect2(SERVER_IP,port);
   if (fd == -1){
     return 0;
   }
@@ -39,37 +44,53 @@ void send_prt_ip_server(int fd){
   int ip = htonl(CLIENT_IP);
   int port = htons(CLIENT_PORT);
 
-  send(fd,port,sizeof(int),0);
-  send(fd,ip,sizeof(int),0);
+  send(fd,(char *)&port,sizeof(int),0);
+  send(fd,(char *)&ip,sizeof(int),0);
 }
 void recv_prt_ip_server(int sck, int *port, int *ip){
-  recv(sck, *ip, sizeof(int), 0);
-  recv(sck, *port, sizeof(int), 0);
-void send_file(int sck, int file){//another thread+ not thread version
+  recv(sck, ip, sizeof(int), 0);
+  recv(sck, port, sizeof(int), 0);
+}
+void send_file(int skt, int fd){//another thread+ not thread version
   char buf[1000];
+  int sz = sizeof(buf)/sizeof(buf[0]);
   int l = 0;
   //TODO change 1000 -> sizeof(BUFF)
   do{
-    l = read(fd, buf, 1000);
+    l = read(fd, buf, sz);
+    if(l == -1){
+      break;
+    }
     int k = 0;
     while(k != l){
-      int n  = send(skt,buf,1000,0);
+      int n  = send(skt,buf,sz,0);
       k+=n;
     }
+    if(l < sz){
+      break;
+    }
+  }while(1);
   
 }
 
-void  recv_file(int sck, int fd, int size){//another thread+ not thread version
-  char buf[1000];
+void  recv_file(int sck, int fd){//another thread+ not thread version
+  char buf[SIZE];
   int l = 0;
-  //TODO change 1000 -> sizeof(BUFF)
+  int sz = sizeof(buf)/sizeof(buf[0]);
   do{
-    l = recv(sck, buf, 1000,0);
+    l = recv(sck, buf, sz,0);
+    if(l == -1){
+      break;
+    }
     int k = 0;
     while(k != l){
       int n  = write(fd,buf,l);
       k+=n;
     }
+    if(l < sz){
+      break;
+    }
+  }while(1);
 }
 
 
