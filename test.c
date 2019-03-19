@@ -10,7 +10,9 @@ int select_not_dir(struct dirent* a);
 int main(){
   //print_dir(".");
   //dir3();
-  //print_dir2(select_dir);
+  printf("\x1b[1m");
+  print_dir2(select_dir);
+  printf("\x1b[0m");
   print_dir2(select_not_dir);
 }
 
@@ -22,7 +24,6 @@ int select_not_dir(struct dirent* a){
 }
 
     
-
 void print_dir(const char * d){
      char buf[1000];
   DIR *dir;
@@ -75,9 +76,6 @@ int is_directory(const char *path){
   }
   return S_ISDIR(stat_buf.st_mode);
 }
-int cmp_dir(struct dirent* a){
-  return is_directory(a->d_name);
-}
 
 int dir3()
 {
@@ -85,7 +83,7 @@ int dir3()
   struct dirent **eps_dir;
   int n;
 
-  n = scandir ("./", &eps_dir, cmp_dir, alphasort);
+  n = scandir ("./", &eps_dir, select_dir, alphasort);
   if (n >= 0)
     {
       int cnt;
