@@ -111,6 +111,10 @@ int open_port(int PORT){
   addr.sin_port = PORT;
   
   int skt = socket(PF_INET, SOCK_STREAM, 0);
+
+  int enable = 1;
+  if(setsockopt(skt,SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)))
+     perror("setsockopt(SO_REUSEADDR)failed");
 #ifdef DEBUG
   printf("hi\n");
 #endif

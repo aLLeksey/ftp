@@ -1,8 +1,21 @@
 TODO:
-     Connect client+server	
+     Connect client+server(!!!)	
 TODO server:
-     BE connectable(!!!)
-     Send/Print file names
+     BE connectable(!!!)+
+     Make sever send smth+
+     Send/Print file names+
+     EndConnections
+     select file
+     send file
+     
 TODO client:
      (???)
-     
+     recieve FILELIST
+     Select file
+     recv file
+     save file
+
+TODO:
+	Add telenet communuication(protocol)
+	Add FTP commnication
+	Connect to OTHER ftp client/sertver
