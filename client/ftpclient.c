@@ -12,7 +12,12 @@
 #include <errno.h>
 #include <stdio.h>
 
+
+#ifndef COMMON
+#define COMMON
 #include "../common.c"
+#endif
+
 #ifndef SIZE
 #define SIZE 1000
 #endif
@@ -55,7 +60,6 @@ void send_file(int skt, int fd){//another thread+ not thread version
   char buf[1000];
   int sz = sizeof(buf)/sizeof(buf[0]);
   int l = 0;
-  //TODO change 1000 -> sizeof(BUFF)
   do{
     l = read(fd, buf, sz);
     if(l == -1){

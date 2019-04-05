@@ -1,4 +1,13 @@
 #define SIZE 1000
+#define COMMON
+
+#define DEBUG
+
+#define min(x,y) ((x) < (y)) ? (x) : (y)
+
+
+// TODO add and fill common.h
+//and add headers
 
 void talk2(int socket){
   char buf[1000];
@@ -92,16 +101,19 @@ int connect4rom(int PORT){
 
 
 
-
+// all in network byte order
 int open_port(int PORT){
   struct sockaddr_in addr;
 
   memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
-  addr.sin_port = htons(PORT);
+  //addr.sin_port = htons(PORT);
+  addr.sin_port = PORT;
   
   int skt = socket(PF_INET, SOCK_STREAM, 0);
+#ifdef DEBUG
   printf("hi\n");
+#endif
   bind(skt, (struct sockaddr*) &addr, sizeof(addr));
   
   if(listen(skt, 0) == -1){

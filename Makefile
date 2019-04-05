@@ -4,9 +4,9 @@ client: client/client
 
 server: server/server
 
-client/client: client/ftpclient.c
+client/client: client/ftpclient.c common.c
 	gcc client/ftpclient.c -o client/client
-server/server: server/ftpserver.c
+server/server: server/ftpserver.c common.c
 	gcc server/ftpserver.c -o server/server
 clean:
 	rm client/client server/server

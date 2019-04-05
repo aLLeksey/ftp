@@ -9,6 +9,17 @@
 
 #define SERVER_PORT 21
 
+#ifndef SIZE
+#define SIZE 1000
+#endif
+
+// TODO:
+/*
+*/
+//TODO
+
+
+
 int open_port(int PORT);
 int transfer();
 
@@ -25,8 +36,12 @@ int transfer();
 #include<errno.h>
 
 #include<dirent.h>
-  
+
+
+#ifndef COMMON
+#define COMMON
 #include "../common.c"
+#endif
 
 
 void talk2client(int socket);
@@ -34,7 +49,7 @@ void talk2client(int socket);
 int main(){
   int port = htons(SERVER_PORT);
   int fd = open_port(port);
-  void send_file_list(fd);
+  send_file_list(fd);
   /*
   if (fd != -1)
     talk1(fd);
@@ -44,65 +59,29 @@ int main(){
 
 
 
-//TODO
-
-
-/*
-void talk (int socket){
-  
-  
-  char buf[MAXPORT + 1];
-  rv = recv(fd, buf, MAXPORT, 0);
-  if (rv == -1){
-    perror("recive port %d", errno);
-  }
-  buf[MAXPORT] = 0;
-  int port = atoi(buf);
-  printf("%d\n", port);
-  return 0;
-
-  itoa(port, buffer, 10);
-  buf[MAXPORT] = 0;
-  
-  sd = send(skt, buf, MAXPORT, 0);
-
-  if (sd == -1){
-    perror("send port %d ",errno);
-  }
-
-  char buf[MAXPORT + 1];
-  rv = recv(fd, buf, MAXPORT, 0);
-  if (rv == -1){
-    perror("recive ok  %d", errno);
-  }
-  buf[2] = 0;
-  if (strncmp(buf, "ok", 2) == 0){
-    printf("OK");
-  }
-  else {
-    perror("WRONG CLIENT PORT");
-  }
-}
-
-*/
-
-
-void send_file_list(int sck){
+void send_file_list(int skt){
   char buf[1000];
   DIR *dir;
   struct dirent *ent;
   if((dir = opendir(".")) != NULL ){
       while ((ent == readdir(dir)) != NULL){
         //TODO send ent->d_name
-	snprintf(buf,1000,"%s\n",ent->d_name);
-	do{
-	  l = read(fd, buf, 1000);
-	  int k = 0;
-	  while(k != l){
-	    int n  = send(skt,buf,1000,0);
-	    k+=n;
-	  }
-	}
+	int n = strnlen(ent->d_name, SIZE - 1);
+	//send_string(ent->d_name,n,skt);
+	//send_string("hi",2,skt);
+	//printf("%s\n",ent->d_name);
       }
     }
+}
+//send string no more than n  bytes(chars) including zero
+void send_string(char *s,int n,int sk){
+  while(n >= 0){
+    int size = min(n,SIZE);
+    int k = 0;
+    while(k < size){
+      int n1  = send(sk,s,size,0);//<-TODO n <- size
+      k+=n1;
+    }
+    n-=size;
+  }
 }
