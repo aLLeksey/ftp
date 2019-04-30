@@ -6,24 +6,28 @@
 #define min(x,y) ((x) < (y)) ? (x) : (y)
 
 
-// TODO add and fill common.h
+//TODO add and fill common.h
 //and add headers
 
-void talk2(int socket){
-  char buf[1000];
+void talk_recv(int socket){
+  char buf[SIZE];
   while(1){
-    int k = recv(socket,buf,999,0);
+    int k = recv(socket,buf,SIZE-1,0);//SIZE-1 <=> plase for ZERO byte
     buf[k] = 0;
-    printf("%s",k);
+    printf("%s",buf);
   }
 }
 
-void talk1(int socket){
-  char buf[1000]="lala";
-  int n = strnlen(buf,1000);
+void talk_send(int socket){
+  char buf[SIZE]="lala";
+  send(socket,buf,4,0);
+  /*
+  char buf[SIZE]="lala";
+  int n = strnlen(buf,SIZE);
   while(1){
     int k = send(socket,buf,n,0);
   }
+  */
 }
 
 

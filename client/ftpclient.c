@@ -1,3 +1,6 @@
+//TODO
+// MAKE SEND(!)/RECV messages client
+
 
 #include <string.h>
 
@@ -39,8 +42,24 @@ int main(){
   if (fd == -1){
     return 0;
   }
-  talk2(fd);
+  printf("fd=%d\n",fd);
+  char *buf=NULL;
+  int n=0;
+  
+  int k = getline(&buf,&n,stdin);// \n\0
+  printf("k=%d\\n=%d",k,n);
+  send(fd,buf,k,0);//???????????????????? why netcat here stop rcving
+
+  buf2[SIZE]="HELLO";
+  printf("%s",buf2);
+  
+  
+  
+  //talk_send(fd);
+  // talk_recv(fd);
+  /*
   client_listen_fd = open_port(CLIENT_PORT);
+  */
 }
 
 
@@ -104,6 +123,22 @@ void  recv_file(int sck, int fd){//another thread+ not thread version
 
 void rcv_and_print_file_list(int sck){
 }
+//nc connect
+//nc localhost 21
+//nc listen
+//sudo nc -l 21
+
+//0 connect client server
+//#connect nc server +
+//#connect client nc +
+//#send(!)/recv smth nc (!!!) -
+//#talk client nc -
+//#connect client server (client segfal)-
+
+//TODO LIST
+//
+//
+//SHOW FILES LIST FROM SERVER IN CLIENT(!!!!)
 
 
 // FIX COMPILE ERRORS
