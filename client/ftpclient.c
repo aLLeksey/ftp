@@ -1,7 +1,3 @@
-//TODO
-// MAKE SEND(!)/RECV messages client
-
-
 #include <string.h>
 
 #include <sys/types.h>
@@ -14,6 +10,8 @@
 
 #include <errno.h>
 #include <stdio.h>
+
+#include <pthread.h>
 
 
 #ifndef COMMON
@@ -34,31 +32,38 @@
 #define CLIENT_IP 0
 #define SERVER_IP 0
 
-int client_listen_fd;
+void rcv_and_print_file_list(int sck);
+
+//TODO 
+int client_listen_fd; //WHAT is it??? 
 
 int main(){
   int port = htons(SERVER_PORT);
-  int fd =  connect2(SERVER_IP,port);
-  if (fd == -1){
+  int sk =  connect2(SERVER_IP,port);
+  if (sk == -1){
     return 0;
   }
-  printf("fd=%d\n",fd);
+
+  pthread_t tid1;
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+  pthread_create(&tid1,&attr,rcv_and_print_file_list,sk);
+  pthread_join(tid1, NULL);
+  
   char *buf=NULL;
   int n=0;
+  while(1){
+    int k = getline(&buf,&n,stdin);// \n\0 <- include
+    // k = count without '\n'
+    if(send(sk,buf,k+1,0) == -1){
+      perror("send error");
+    }
+  }
   
-  int k = getline(&buf,&n,stdin);// \n\0
-  printf("k=%d\\n=%d",k,n);
-  send(fd,buf,k,0);//???????????????????? why netcat here stop rcving
-
-  buf2[SIZE]="HELLO";
-  printf("%s",buf2);
-  
-  
-  
-  //talk_send(fd);
-  // talk_recv(fd);
+  //talk_send(sk);
+  // talk_recv(sk);
   /*
-  client_listen_fd = open_port(CLIENT_PORT);
+  client_listen_sk = open_port(CLIENT_PORT);
   */
 }
 
@@ -116,12 +121,37 @@ void  recv_file(int sck, int fd){//another thread+ not thread version
   }while(1);
 }
 
-
+void recv_smth(int skt, char * BUF, int len){
+  int l = 0;
+  int sz = len;
+  //do{
+    l = recv(skt, BUF, sz,0);
+    if ( l > sz){
+      perror("RECV to much...\n more than BUF");
+      exit(1);
+      //l = sz;
+      //BUF[l] = 0;
+      
+    }
+    BUF[l] = 0;
+    //   if(l == -1){
+    //     break;
+    //   }
+    // }while(1);
+}
+  
 
   
 	
 
-void rcv_and_print_file_list(int sck){
+void rcv_and_print_file_list(int skt){
+  char buf[SIZE];
+  while(1){
+    recv_smth(skt,buf,SIZE - 1);
+    buf[SIZE-1] = 0;
+    printf("%s",buf);
+  } 
+ 
 }
 //nc connect
 //nc localhost 21
@@ -131,8 +161,11 @@ void rcv_and_print_file_list(int sck){
 //0 connect client server
 //#connect nc server +
 //#connect client nc +
-//#send(!)/recv smth nc (!!!) -
-//#talk client nc -
+//#send(!)/recv smth nc (!!!) + done
+//#talk client nc +-
+//#################
+//it FUCKING recvs(different thread) but not sends !!!!!
+//#####################
 //#connect client server (client segfal)-
 
 //TODO LIST

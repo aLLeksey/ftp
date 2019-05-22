@@ -5,7 +5,7 @@ client: client/client
 server: server/server
 
 client/client: client/ftpclient.c common.c
-	gcc client/ftpclient.c -o client/client
+	gcc client/ftpclient.c -lpthread -o client/client
 server/server: server/ftpserver.c common.c
 	gcc server/ftpserver.c -o server/server
 clean:

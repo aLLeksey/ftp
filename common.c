@@ -66,7 +66,7 @@ int connect2(int IP, int PORT){
     perror("cnct error");
     return -1;
   }
-  return cnct;
+  return skt;
 }
 
 

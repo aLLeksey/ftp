@@ -36,7 +36,7 @@ int transfer();
 #include<errno.h>
 
 #include<dirent.h>
-
+#include<sys/stat.h>
 
 #ifndef COMMON
 #define COMMON
@@ -50,7 +50,9 @@ int main(){
   //TODO  
   int port = htons(SERVER_PORT);
   int fd = open_port(port);
-  
+  if (fd == -1){
+    perror("can't open port");
+  }
   send_file_list(fd);
   /*
   if (fd != -1)
@@ -68,9 +70,9 @@ void send_file_list(int skt){
   if((dir = opendir(".")) != NULL ){
       while ((ent = readdir(dir)) != NULL){
 	int n = strnlen(ent->d_name, SIZE - 2);
-	snprintf(buf,n+2,"%s\n",ent->d_name);
+	//snprintf(buf,n+2,"%s\n",ent->d_name);
 	//send_string(ent->d_name,n,skt);
-	printf("%s",buf);
+	//printf("%s",buf);
 	send_string(buf,n+2,skt);
       }
     }
@@ -87,3 +89,51 @@ void send_string(char *s,int n,int sk){
     n-=size;
   }
 }
+
+
+///Send File List Second Edtn////////////
+
+int select_dir(struct dirent* a){
+  return is_directory(a->d_name);
+}
+int select_not_dir(struct dirent* a){
+  return !select_dir(a);
+}
+
+
+int is_directory(const char *path){
+  struct stat stat_buf;
+  if(stat(path, &stat_buf) != 0){
+    return 0;
+  }
+  return S_ISDIR(stat_buf.st_mode);
+}
+
+
+int print_dir(int (*filter)(const struct dirent *)){
+  struct dirent **eps;
+  int n;
+
+  n = scandir ("./", &eps, filter, alphasort);
+  if (n >= 0){
+    int cnt;
+    for (cnt = 0; cnt < n; ++cnt) {
+      puts (eps[cnt]->d_name);
+      free (eps[cnt]);
+    }
+    free(eps);
+  }  
+
+  else{
+    perror ("Couldn't open the directory");
+  }
+  return 0;
+}
+
+void send_file_list_2(){
+  printf("\x1b[1m");
+  print_dir(select_dir);
+  printf("\x1b[0m");
+  print_dir(select_not_dir);
+}
+
