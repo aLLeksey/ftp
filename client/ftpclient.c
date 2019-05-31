@@ -33,35 +33,30 @@
 #define SERVER_IP 0
 
 void rcv_and_print_file_list(int sck);
+void keyboard_send(int sck);
 
 //TODO 
 int client_listen_fd; //WHAT is it??? 
 
 int main(){
   int port = htons(SERVER_PORT);
-  int sk =  connect2(SERVER_IP,port);
-  if (sk == -1){
+  int sck =  connect2(SERVER_IP,port);
+  if (sck == -1){
     return 0;
   }
 
-  pthread_t tid1;
-  pthread_attr_t attr;
-  pthread_attr_init(&attr);
-  pthread_create(&tid1,&attr,rcv_and_print_file_list,sk);
-    
-  
-  char *buf=NULL;
-  int n=0;
-  while(1){
-    int k = getline(&buf,&n,stdin);// buf,n -< \n\0 <- include
-    // k = count wit '\n' without '\0'
-    /* if(send(sk,buf,k+1,0) == -1){
-      perror("send error");
-    */
-    send_string(buf, k +1 , sk)
-    }
-  }
+  pthread_t tid1;// recv text
+  pthread_attr_t attr1;
+  pthread_attr_init(&attr1);
+  pthread_create(&tid1,&attr1,rcv_and_print_file_list,sck);
 
+  pthread_t tid2;// send text
+  pthread_attr_t attr2;
+  pthread_attr_init(&attr2);
+  pthread_create(&tid2,&attr2,keyboard_send,sck);
+  
+ 
+  ptheard_join(tid2, NULL);_
   pthread_join(tid1, NULL);
   
   //talk_send(sk);
@@ -71,7 +66,15 @@ int main(){
   */
 }
 
-
+void keyboard_send(int sck){
+  char *buf=NULL;
+  int n=0;
+  while(1){
+    int k = getline(&buf,&n,stdin);// buf,n -< \n\0 <- include
+    // k = count with '\n' without '\0'
+    send_string_a(buf, k +1 , sk);
+  }
+}
   
 void send_prt_ip_server(int fd){
   int ip = htonl(CLIENT_IP);
@@ -104,7 +107,8 @@ void send_file(int skt, int fd){//another thread+ not thread version
   }while(1);
   
 }
-void send_string(const char *s,int n,int sk){
+//TODO FIX
+void send_string_a(const char *s,int n,int sk){
   while(n > 0){
     int size = min(n,SIZE);
     n-=size;
@@ -112,9 +116,9 @@ void send_string(const char *s,int n,int sk){
       int k  = send(sk,s,size,0);
       if ( k == -1){
 	perror("send string error");
-	//sleep(1);
+	sleep(5);
 	k = 0;
-	exit(1);
+	//exit(1);
       }
       size-=k;
     }
@@ -151,7 +155,6 @@ void recv_smth(int skt, char * BUF, int len){
       perror("RECV to much...\n more than BUF");
       exit(1);    
     }
-    //BUF[l] = 0;
 }
   
 
@@ -161,7 +164,7 @@ void recv_smth(int skt, char * BUF, int len){
 void rcv_and_print_file_list(int skt){
   char buf[SIZE];
   while(1){
-    recv_smth(skt,buf,SIZE - 1);
+    recv_smth(skt,buf,SIZE);
     buf[SIZE-1] = 0;
     printf("%s",buf);
   } 
@@ -176,11 +179,11 @@ void rcv_and_print_file_list(int skt){
 //#connect nc server +
 //#connect client nc +
 //#send(!)/recv smth nc (!!!) + done
-//#talk client nc +-
+//#talk client nc +
 //#################
-//it FUCKING recvs(different thread) but not sends !!!!! +-
+//it FUCKING recvs(different thread) but not sends !!!!! +
 //#####################
-// recv's/sends but with problem +-
+// recv's/sends but with problem (possible BUGS) +-
 //#connect client server (client segfal)-
 
 //TODO LIST
