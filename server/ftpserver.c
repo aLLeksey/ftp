@@ -32,6 +32,7 @@ int transfer();
 
 #include<unistd.h>
 #include<stdio.h>
+#include<stdlib.h>
 
 #include<errno.h>
 
@@ -45,6 +46,9 @@ int transfer();
 
 
 void talk2client(int socket);
+int is_directory(const char *path);
+void send_string(const char *s,int n,int sk);
+void send_file_list(int skt);
 
 int main(){
   //TODO  
@@ -78,7 +82,7 @@ void send_file_list(int skt){
     }
 }
 //send string no more than n  bytes(chars) including zero
-void send_string(char *s,int n,int sk){
+void send_string(const char *s,int n,int sk){
   while(n > 0){
     int size = min(n,SIZE);
     int k = 0;
@@ -93,10 +97,10 @@ void send_string(char *s,int n,int sk){
 
 ///Send File List Second Edtn////////////
 
-int select_dir(struct dirent* a){
+int select_dir(const struct dirent* a){
   return is_directory(a->d_name);
 }
-int select_not_dir(struct dirent* a){
+int select_not_dir(const struct dirent* a){
   return !select_dir(a);
 }
 

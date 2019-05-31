@@ -1,4 +1,6 @@
-#include <string.h>
+#ifndef DEBUG
+#define DEBUG
+#endif
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -7,7 +9,8 @@
 #include <arpa/inet.h>
 
 #include <unistd.h>
-
+#include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <stdio.h>
 
@@ -35,6 +38,8 @@
 void rcv_and_print_file_list(int sck);
 void keyboard_send(int sck);
 
+void send_string_a(const char *s,int n,int sck);
+
 //TODO 
 int client_listen_fd; //WHAT is it??? 
 
@@ -56,7 +61,7 @@ int main(){
   pthread_create(&tid2,&attr2,keyboard_send,sck);
   
  
-  ptheard_join(tid2, NULL);_
+  pthread_join(tid2, NULL);
   pthread_join(tid1, NULL);
   
   //talk_send(sk);
@@ -68,11 +73,11 @@ int main(){
 
 void keyboard_send(int sck){
   char *buf=NULL;
-  int n=0;
+  size_t n=0;
   while(1){
     int k = getline(&buf,&n,stdin);// buf,n -< \n\0 <- include
     // k = count with '\n' without '\0'
-    send_string_a(buf, k +1 , sk);
+    send_string_a(buf, k + 1 , sck);
   }
 }
   
@@ -108,12 +113,12 @@ void send_file(int skt, int fd){//another thread+ not thread version
   
 }
 //TODO FIX
-void send_string_a(const char *s,int n,int sk){
+void send_string_a(const char *s,int n,int sck){
   while(n > 0){
     int size = min(n,SIZE);
     n-=size;
     while(size >0){
-      int k  = send(sk,s,size,0);
+      int k  = send(sck,s,size,0);
       if ( k == -1){
 	perror("send string error");
 	sleep(5);
@@ -155,6 +160,7 @@ void recv_smth(int skt, char * BUF, int len){
       perror("RECV to much...\n more than BUF");
       exit(1);    
     }
+    BUF[l] = 0;
 }
   
 
@@ -164,7 +170,7 @@ void recv_smth(int skt, char * BUF, int len){
 void rcv_and_print_file_list(int skt){
   char buf[SIZE];
   while(1){
-    recv_smth(skt,buf,SIZE);
+    recv_smth(skt,buf,SIZE-1);
     buf[SIZE-1] = 0;
     printf("%s",buf);
   } 
@@ -183,6 +189,7 @@ void rcv_and_print_file_list(int skt){
 //#################
 //it FUCKING recvs(different thread) but not sends !!!!! +
 //#####################
+//send/recv different thread(later may be change that)+
 // recv's/sends but with problem (possible BUGS) +-
 //#connect client server (client segfal)-
 
@@ -191,6 +198,7 @@ void rcv_and_print_file_list(int skt){
 //
 //SHOW FILES LIST FROM SERVER IN CLIENT(!!!!)
 
+//send/recv different thread(later may be change that)+
 
 // FIX COMPILE ERRORS
 
