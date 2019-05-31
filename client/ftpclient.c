@@ -39,6 +39,8 @@ void rcv_and_print_file_list(int sck);
 void keyboard_send(int sck);
 
 void send_string_a(const char *s,int n,int sck);
+void recv_smth2(int skt);
+
 
 //TODO 
 int client_listen_fd; //WHAT is it??? 
@@ -53,7 +55,7 @@ int main(){
   pthread_t tid1;// recv text
   pthread_attr_t attr1;
   pthread_attr_init(&attr1);
-  pthread_create(&tid1,&attr1,rcv_and_print_file_list,sck);
+  pthread_create(&tid1,&attr1,recv_smth2,sck);
 
   pthread_t tid2;// send text
   pthread_attr_t attr2;
@@ -163,7 +165,14 @@ void recv_smth(int skt, char * BUF, int len){
     }
     BUF[l] = 0;
 }
-  
+void recv_smth2(int skt){
+  char BUF[SIZE];
+  while(1){
+    int l = recv(skt,BUF,SIZE-1,0);
+    BUF[l] = 0;
+    printf("%s", BUF);
+  }
+}
 
   
 	

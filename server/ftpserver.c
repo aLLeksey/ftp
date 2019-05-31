@@ -78,8 +78,8 @@ void send_file_list(int skt){
       while ((ent = readdir(dir)) != NULL){
 	int n = strnlen(ent->d_name, SIZE - 2);//without \0
 	snprintf(buf,n+2,"%s\n",ent->d_name);//\0\n
-	send_string(ent->d_name,n,skt);
-	send_string("\n", 1, skt);
+	send_string_2(ent->d_name,n+1,skt);
+	send_string_2("\n", 2, skt);
 	printf("%s",buf);
 	//send_string(buf,min(n+2,SIZE),skt);
       }
@@ -103,7 +103,9 @@ void send_string(const char *s,int n,int sk){
     n-=size;
   }
 }
-
+void send_string_2(const char *s, int n, int sk){
+  send(sk,s,n,0);
+}
 
 ///Send File List Second Edtn////////////
 
