@@ -48,15 +48,17 @@ int main(){
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   pthread_create(&tid1,&attr,rcv_and_print_file_list,sk);
-  
+    
   
   char *buf=NULL;
   int n=0;
   while(1){
-    int k = getline(&buf,&n,stdin);// \n\0 <- include
-    // k = count without '\n'
-    if(send(sk,buf,k+1,0) == -1){
+    int k = getline(&buf,&n,stdin);// buf,n -< \n\0 <- include
+    // k = count wit '\n' without '\0'
+    /* if(send(sk,buf,k+1,0) == -1){
       perror("send error");
+    */
+    send_string(buf, k +1 , sk)
     }
   }
 
@@ -102,6 +104,24 @@ void send_file(int skt, int fd){//another thread+ not thread version
   }while(1);
   
 }
+void send_string(const char *s,int n,int sk){
+  while(n > 0){
+    int size = min(n,SIZE);
+    n-=size;
+    while(size >0){
+      int k  = send(sk,s,size,0);
+      if ( k == -1){
+	perror("send string error");
+	//sleep(1);
+	k = 0;
+	exit(1);
+      }
+      size-=k;
+    }
+    
+  }
+}
+
 
 void  recv_file(int sck, int fd){//another thread+ not thread version
   char buf[SIZE];
@@ -126,20 +146,12 @@ void  recv_file(int sck, int fd){//another thread+ not thread version
 void recv_smth(int skt, char * BUF, int len){
   int l = 0;
   int sz = len;
-  //do{
     l = recv(skt, BUF, sz,0);
     if ( l > sz){
       perror("RECV to much...\n more than BUF");
-      exit(1);
-      //l = sz;
-      //BUF[l] = 0;
-      
+      exit(1);    
     }
-    BUF[l] = 0;
-    //   if(l == -1){
-    //     break;
-    //   }
-    // }while(1);
+    //BUF[l] = 0;
 }
   
 
