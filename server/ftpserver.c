@@ -53,11 +53,14 @@ void send_file_list(int skt);
 int main(){
   //TODO  
   int port = htons(SERVER_PORT);
-  int fd = open_port(port);
-  if (fd == -1){
+  int sk = open_port(port);
+  if (sk == -1){
     perror("can't open port");
   }
-  send_file_list(fd);
+  
+  send_string("Hello!\n", sizeof("Hello!\n"), sk);
+  send_file_list(sk);
+  
   /*
   if (fd != -1)
     talk1(fd);
@@ -73,11 +76,12 @@ void send_file_list(int skt){
   struct dirent *ent;
   if((dir = opendir(".")) != NULL ){
       while ((ent = readdir(dir)) != NULL){
-	int n = strnlen(ent->d_name, SIZE - 2);
-	//snprintf(buf,n+2,"%s\n",ent->d_name);
-	//send_string(ent->d_name,n,skt);
-	//printf("%s",buf);
-	send_string(buf,n+2,skt);
+	int n = strnlen(ent->d_name, SIZE - 2);//without \0
+	snprintf(buf,n+2,"%s\n",ent->d_name);//\0\n
+	send_string(ent->d_name,n,skt);
+	send_string("\n", 1, skt);
+	printf("%s",buf);
+	//send_string(buf,min(n+2,SIZE),skt);
       }
     }
 }
@@ -88,7 +92,13 @@ void send_string(const char *s,int n,int sk){
     int k = 0;
     while(k < size){
       int n1  = send(sk,s,size,0);
+      if(n1 == -1){
+	perror("cant' send");
+	sleep(5);
+	n1 = 0;
+      }
       k+=n1;
+      s+=n1;
     }
     n-=size;
   }

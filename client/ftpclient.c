@@ -112,7 +112,7 @@ void send_file(int skt, int fd){//another thread+ not thread version
   }while(1);
   
 }
-//TODO FIX
+//TODO FIXp;
 void send_string_a(const char *s,int n,int sck){
   while(n > 0){
     int size = min(n,SIZE);
@@ -125,6 +125,7 @@ void send_string_a(const char *s,int n,int sck){
 	k = 0;
 	//exit(1);
       }
+      s = s+k;//<-TODO TEST.  NEED to add k??? 
       size-=k;
     }
     
@@ -192,6 +193,7 @@ void rcv_and_print_file_list(int skt){
 //send/recv different thread(later may be change that)+
 // recv's/sends but with problem (possible BUGS) +-
 //#connect client server (client segfal)-
+//TODO ^ (show files client NOT wokring)
 
 //TODO LIST
 //
