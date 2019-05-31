@@ -48,7 +48,7 @@ int main(){
   pthread_attr_t attr;
   pthread_attr_init(&attr);
   pthread_create(&tid1,&attr,rcv_and_print_file_list,sk);
-  pthread_join(tid1, NULL);
+  
   
   char *buf=NULL;
   int n=0;
@@ -59,6 +59,8 @@ int main(){
       perror("send error");
     }
   }
+
+  pthread_join(tid1, NULL);
   
   //talk_send(sk);
   // talk_recv(sk);
@@ -164,8 +166,9 @@ void rcv_and_print_file_list(int skt){
 //#send(!)/recv smth nc (!!!) + done
 //#talk client nc +-
 //#################
-//it FUCKING recvs(different thread) but not sends !!!!!
+//it FUCKING recvs(different thread) but not sends !!!!! +-
 //#####################
+// recv's/sends but with problem +-
 //#connect client server (client segfal)-
 
 //TODO LIST
