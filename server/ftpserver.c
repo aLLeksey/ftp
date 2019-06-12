@@ -58,7 +58,12 @@ int main(){
     perror("can't open port");
   }
   
-  send_string("Hello!\n", sizeof("Hello!\n"), sk);
+  send_string_2("Hello!\n", sizeof("Hello!\n"), sk);
+  char *buf=NULL;
+  size_t n=0;
+  // int k = getline(&buf,&n,stdin);// buf,n -< \n\0 <- include
+    // k = count with '\n' without '\0'
+  // send_string_2(buf, k + 1 , sk);
   send_file_list(sk);
   
   /*
@@ -78,10 +83,13 @@ void send_file_list(int skt){
       while ((ent = readdir(dir)) != NULL){
 	int n = strnlen(ent->d_name, SIZE - 2);//without \0
 	snprintf(buf,n+2,"%s\n",ent->d_name);//\0\n
-	send_string_2(ent->d_name,n+1,skt);
-	send_string_2("\n", 2, skt);
-	printf("%s",buf);
-	//send_string(buf,min(n+2,SIZE),skt);
+	//send_string_2(ent->d_name,n+1,skt);
+	//send_string_2("\n", 2, skt);
+	//printf("%s",buf);
+	send_string(buf,min(n+2,SIZE),skt);;
+	// strangelly works only with printf + input
+	// WHYWHYWHY???
+	// TODO MAKE IT WORK
       }
     }
 }
@@ -89,18 +97,17 @@ void send_file_list(int skt){
 void send_string(const char *s,int n,int sk){
   while(n > 0){
     int size = min(n,SIZE);
-    int k = 0;
-    while(k < size){
+    n-=size;
+    while(size > 0){
       int n1  = send(sk,s,size,0);
       if(n1 == -1){
 	perror("cant' send");
 	sleep(5);
 	n1 = 0;
       }
-      k+=n1;
       s+=n1;
+      size-=n1;
     }
-    n-=size;
   }
 }
 void send_string_2(const char *s, int n, int sk){
@@ -152,4 +159,3 @@ void send_file_list_2(){
   printf("\x1b[0m");
   print_dir(select_not_dir);
 }
-

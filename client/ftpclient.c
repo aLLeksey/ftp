@@ -169,10 +169,14 @@ void recv_smth2(int skt){
   char BUF[SIZE];
   while(1){
     int l = recv(skt,BUF,SIZE-1,0);
+    if(l == -1){
+      perror("recv error");
+    }
     BUF[l] = 0;
     printf("%s", BUF);
   }
 }
+
 
   
 	
