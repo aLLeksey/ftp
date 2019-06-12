@@ -80,7 +80,7 @@ void send_file_list(int skt){
 	//snprintf(buf,n+2,"%s\n",ent->d_name);//\n\0
 	snprintf(buf,n+1,"%s",ent->d_name);//\n\0
 	//send_string(buf,min(n+2,SIZE),skt);
-	send_string(buf,n+1,skt);
+	send_string_2(buf,n+1,skt);
 	
 	// strangelly works only with printf + input
 	// WHYWHYWHY???
