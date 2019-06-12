@@ -51,7 +51,9 @@ int main(){
   if (sck == -1){
     return 0;
   }
-
+  /*
+// TO CHECK IF THEADING AFFECTS.
+// ANSWER: DOESNT' MATTER. STILL NOT WORKING.
   pthread_t tid1;// recv text
   pthread_attr_t attr1;
   pthread_attr_init(&attr1);
@@ -65,13 +67,15 @@ int main(){
  
   pthread_join(tid2, NULL);
   pthread_join(tid1, NULL);
-  
+  */
   //talk_send(sk);
   // talk_recv(sk);
   /*
   client_listen_sk = open_port(CLIENT_PORT);
   */
+  recv_smth2(sck);
 }
+
 
 void keyboard_send(int sck){
   char *buf=NULL;
@@ -207,6 +211,8 @@ void rcv_and_print_file_list(int skt){
 // recv's/sends but with problem (possible BUGS) +-
 //#connect client server (client segfal)-
 //TODO ^ (show files client NOT wokring)
+// Threading doesn't matter: still NOT working
+
 
 //TODO LIST
 //

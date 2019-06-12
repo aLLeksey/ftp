@@ -59,11 +59,6 @@ int main(){
   }
   
   send_string_2("Hello!\n", sizeof("Hello!\n"), sk);
-  char *buf=NULL;
-  size_t n=0;
-  // int k = getline(&buf,&n,stdin);// buf,n -< \n\0 <- include
-    // k = count with '\n' without '\0'
-  // send_string_2(buf, k + 1 , sk);
   send_file_list(sk);
   
   /*
@@ -82,11 +77,11 @@ void send_file_list(int skt){
   if((dir = opendir(".")) != NULL ){
       while ((ent = readdir(dir)) != NULL){
 	int n = strnlen(ent->d_name, SIZE - 2);//without \0
-	snprintf(buf,n+2,"%s\n",ent->d_name);//\0\n
-	//send_string_2(ent->d_name,n+1,skt);
-	//send_string_2("\n", 2, skt);
-	//printf("%s",buf);
-	send_string(buf,min(n+2,SIZE),skt);;
+	//snprintf(buf,n+2,"%s\n",ent->d_name);//\n\0
+	snprintf(buf,n+1,"%s",ent->d_name);//\n\0
+	//send_string(buf,min(n+2,SIZE),skt);
+	send_string(buf,n+1,skt);
+	
 	// strangelly works only with printf + input
 	// WHYWHYWHY???
 	// TODO MAKE IT WORK
