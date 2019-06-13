@@ -214,6 +214,16 @@ void rcv_and_print_file_list(int skt){
 // Threading doesn't matter: still NOT working
 
 
+//Probleem in pritf /0
+//Client recvs ALL but printf's only for \0
+//need printf after /0 to end
+//clinet/n/0server/n/0/./0../0/a.out/0
+for (int i = 0; i < l; i++) {
+    if (BUF[i] != '\0')
+        putchar(BUF[i]);
+}
+
+
 //TODO LIST
 //
 //
